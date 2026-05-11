@@ -1,0 +1,36 @@
+{
+  "name": "flowzint-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.0.18",
+    "@tailwindcss/forms": "^0.5.4",
+    "axios": "^1.6.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.12.1",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.518.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.10.0",
+    "swr": "^2.3.1",
+    "tailwindcss": "^3.5.4",
+    "typescript": "^5.6.0",
+    "zustand": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.4",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.36",
+    "tailwindcss-animate": "^1.0.6"
+  }
+}
