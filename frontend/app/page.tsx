@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, Sparkles, ShieldCheck, MessageSquare } from "lucide-react";
+import { Sparkles, ShieldCheck, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [

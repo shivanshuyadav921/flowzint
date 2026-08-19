@@ -20,7 +20,8 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:8000/api/auth/signup", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const response = await fetch(`${apiUrl}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, full_name: name }),
@@ -30,8 +31,8 @@ export default function SignupPage() {
         throw new Error(payload.detail || "Signup failed.");
       }
       router.push("/auth/login");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signup failed.");
     } finally {
       setLoading(false);
     }

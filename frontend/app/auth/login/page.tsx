@@ -19,7 +19,8 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
@@ -31,8 +32,8 @@ export default function LoginPage() {
       const data = await response.json();
       localStorage.setItem("flowzint_token", data.access_token);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Login failed.");
     } finally {
       setLoading(false);
     }

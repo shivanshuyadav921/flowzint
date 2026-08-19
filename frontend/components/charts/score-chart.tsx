@@ -20,7 +20,7 @@ export function ScoreChart() {
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <RadialBarChart cx="50%" cy="50%" innerRadius="60%" outerRadius="100%" data={data} startAngle={90} endAngle={-270}>
-            <RadialBar minAngle={15} background clockWise dataKey="value" cornerRadius={12} />
+            <RadialBar background dataKey="value" cornerRadius={12} />
             <Legend iconSize={8} layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ color: "#cbd5e1" }} />
           </RadialBarChart>
         </ResponsiveContainer>
