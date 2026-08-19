@@ -1,14 +1,15 @@
 # Node
-frontend/node_modules
-frontend/.next
-frontend/out
+frontend/node_modules/
+frontend/.next/
+frontend/out/
 
 # Python
-backend/__pycache__
-backend/*.pyc
-backend/.venv
+__pycache__/
+*.py[cod]
+*.pyo
+backend/.venv/
 backend/app.db
-backend/chroma_store
+backend/chroma_store/
 
 # Environment
 .env
