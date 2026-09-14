@@ -1,4 +1,5 @@
 # Node
+node_modules/
 frontend/node_modules/
 frontend/.next/
 frontend/out/
@@ -7,6 +8,7 @@ frontend/out/
 __pycache__/
 *.py[cod]
 *.pyo
+backend/venv/
 backend/.venv/
 backend/app.db
 backend/chroma_store/
@@ -26,3 +28,10 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Vercel
+.vercel/

@@ -1,0 +1,9 @@
+{
+  "name": "flowzint-backend",
+  "version": "1.0.0",
+  "description": "Flowzint AI Interview Preparation Backend",
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py"
+  }
+}

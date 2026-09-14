@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Navbar } from "@/components/navbar";
 import { Sidebar } from "@/components/sidebar";
 import { ScoreChart } from "@/components/charts/score-chart";
-import { ArrowRight, Sparkles, Activity, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, Activity } from "lucide-react";
 
 const stats = [
   { label: "Weekly streak", value: "6 days" },

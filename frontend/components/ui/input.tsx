@@ -1,4 +1,4 @@
-import { ChangeEventHandler, InputHTMLAttributes, ReactNode } from "react";
+import { InputHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

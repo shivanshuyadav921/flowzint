@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -8,6 +9,10 @@ const nextConfig = {
       },
     ],
   },
+  // Suppress hydration warnings from browser extensions
+  reactStrictMode: true,
+  // Enable standalone output for optimized Vercel deployment
+  output: "standalone",
 };
 
 export default nextConfig;

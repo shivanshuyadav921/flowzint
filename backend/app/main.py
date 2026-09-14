@@ -1,13 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
+import logging
 
 from app.api.routes import router as api_router
 from app.core.config import settings
 from app.db.base import Base
 from app.db.session import engine
+import app.models  # noqa: F401 - Register all models for SQLAlchemy
 
+# Initialize database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -27,9 +30,11 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 
 
-@app.exception_handler(Exception)
-async def generic_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error. Please try again later."},
-    )
+@app.get("/")
+def root():
+    return {"status": "ok", "app": "Flowzint AI Interview Assistant API", "version": "0.1.0"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}

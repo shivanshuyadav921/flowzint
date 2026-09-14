@@ -1,3 +1,4 @@
+from typing import List, Dict
 from sqlalchemy.orm import Session
 from app.services.rag_service import SemanticMemory
 from app.services.ai_service import create_embeddings, generate_structured_output
