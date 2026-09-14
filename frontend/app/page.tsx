@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles, ShieldCheck, MessageSquare, ArrowRight, Play, CheckCircle2, Zap } from "lucide-react";
@@ -30,7 +30,12 @@ const features = [
 export default function Home() {
   const router = useRouter();
   const { token, user, setAuth } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [demoStarting, setDemoStarting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const startLiveDemo = async () => {
     setDemoStarting(true);
@@ -82,7 +87,7 @@ export default function Home() {
             <BrandLogo size="md" />
 
             <div className="flex items-center gap-4 text-sm font-medium">
-              {token ? (
+              {mounted && token ? (
                 <div className="flex items-center gap-4">
                   <Link
                     href="/dashboard"
