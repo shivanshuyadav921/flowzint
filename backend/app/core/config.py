@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "Flowzint AI Interview Assistant"
     API_V1_STR: str = "/api"
-    SECRET_KEY: str = Field(default="dev-secret-key", validation_alias="SECRET_KEY")
+    SECRET_KEY: str = Field(default="flowzint-default-development-secret-key-min-32-chars-2026", validation_alias="SECRET_KEY")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
     DATABASE_URL: str = Field(default="sqlite:///./app.db", validation_alias="DATABASE_URL")
     BACKEND_CORS_ORIGINS: List[str] = Field(default=["http://localhost:3000", "https://*.vercel.app"], validation_alias="BACKEND_CORS_ORIGINS")

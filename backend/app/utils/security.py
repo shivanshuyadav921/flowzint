@@ -1,7 +1,13 @@
 from datetime import datetime, timedelta
 from typing import Any
 import bcrypt
-from jose import jwt
+
+try:
+    from jose import jwt, JWTError
+except ImportError:
+    import jwt
+    class JWTError(jwt.PyJWTError if hasattr(jwt, "PyJWTError") else Exception):
+        pass
 
 from app.core.config import settings
 
@@ -26,7 +32,10 @@ def create_access_token(subject: Any, expires_delta: timedelta | None = None) ->
         expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     expire = datetime.utcnow() + expires_delta
     to_encode = {"sub": str(subject), "exp": expire}
-    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
+    token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
+    if isinstance(token, bytes):
+        return token.decode("utf-8")
+    return token
 
 
 def decode_access_token(token: str) -> dict[str, Any]:

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowLeft, Sparkles, Check } from "lucide-react";
+import { Lock, Mail, ArrowLeft, Sparkles, Check, AlertCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrandLogo } from "@/components/brand-logo";
@@ -23,36 +23,44 @@ export default function LoginPage() {
   const [googleEmail, setGoogleEmail] = useState("");
   const [googleName, setGoogleName] = useState("");
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  const getApiUrl = () => {
+    if (typeof window !== "undefined") {
+      const env = process.env.NEXT_PUBLIC_API_URL;
+      if (env && !env.includes("localhost:8000")) return env;
+      return "/api";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "/api";
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+    const apiUrl = getApiUrl();
+
     try {
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
       });
+
       if (!response.ok) {
         const payload = await response.json();
         throw new Error(payload.detail || "Login failed.");
       }
       const data = await response.json();
-      
-      // Fetch user profile
-      let userProfile = { email, full_name: email.split("@")[0] };
+
+      let userProfile = data.user || { email, full_name: email.split("@")[0] };
       try {
         const meRes = await fetch(`${apiUrl}/auth/me`, {
           headers: { Authorization: `Bearer ${data.access_token}` },
         });
         if (meRes.ok) {
-          const meData = await meRes.json();
-          userProfile = meData;
+          userProfile = await meRes.json();
         }
       } catch (e) {
-        // Fallback to local profile
+        // Fallback
       }
 
       setAuth(data.access_token, userProfile);
@@ -67,10 +75,12 @@ export default function LoginPage() {
   const handleGoogleSignIn = async (userEmail?: string, userName?: string) => {
     setGoogleLoading(true);
     setError("");
+    const apiUrl = getApiUrl();
+
     try {
-      const targetEmail = userEmail || "candidate.google@flowzint.com";
-      const targetName = userName || "Google Candidate";
-      
+      const targetEmail = userEmail || googleEmail || "candidate.google@flowzint.com";
+      const targetName = userName || googleName || "Google Candidate";
+
       const response = await fetch(`${apiUrl}/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,7 +88,7 @@ export default function LoginPage() {
           email: targetEmail,
           full_name: targetName,
           google_id: "google_" + Math.random().toString(36).substring(7),
-          avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetEmail}`,
+          avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(targetEmail)}`,
         }),
       });
 
@@ -92,7 +102,7 @@ export default function LoginPage() {
         id: data.user?.id,
         email: data.user?.email || targetEmail,
         full_name: data.user?.full_name || targetName,
-        avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetEmail}`,
+        avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(targetEmail)}`,
       });
 
       setShowGoogleModal(false);
@@ -107,6 +117,8 @@ export default function LoginPage() {
   const handleDemoLogin = async () => {
     setDemoLoading(true);
     setError("");
+    const apiUrl = getApiUrl();
+
     try {
       const response = await fetch(`${apiUrl}/auth/demo`, {
         method: "POST",
@@ -135,70 +147,45 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 px-6 py-12 sm:px-12 relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 sm:px-12 relative overflow-hidden flex items-center justify-center">
       {/* Background Glow */}
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 -z-10 h-96 w-[45rem] rounded-full bg-gradient-to-tr from-brand-600/30 to-indigo-500/20 blur-3xl" />
 
-      <div className="mx-auto grid max-w-5xl w-full gap-10 rounded-[2.5rem] border border-white/10 bg-slate-950/80 p-8 shadow-2xl backdrop-blur-2xl lg:grid-cols-[1fr_1.1fr]">
-        {/* Left Side: Branding & Value Props */}
-        <div className="flex flex-col justify-between rounded-[2rem] bg-gradient-to-br from-brand-900/40 via-slate-900/60 to-slate-950 p-8 text-white border border-white/5">
-          <div>
-            <div className="flex items-center justify-between">
-              <BrandLogo size="md" />
-              <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition">
-                <ArrowLeft size={14} /> Home
-              </Link>
-            </div>
+      {/* Back to Home button */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition"
+      >
+        <ArrowLeft size={16} />
+        <span>Back to Home</span>
+      </Link>
 
-            <div className="mt-12 space-y-4">
-              <span className="inline-flex items-center rounded-full bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-300 ring-1 ring-brand-400/20">
-                Welcome Back
-              </span>
-              <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl text-white">
-                Sign in to your AI interview cockpit.
-              </h1>
-              <p className="text-sm text-slate-400 leading-relaxed">
-                Unlock instant AI mock interviews, realistic answer scoring, ATS resume analysis, and performance analytics.
-              </p>
-            </div>
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <div className="inline-block">
+            <BrandLogo size="lg" />
           </div>
-
-          <div className="mt-8 space-y-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-xs text-slate-300">
-            <div className="flex items-center gap-2.5">
-              <div className="grid h-5 w-5 place-items-center rounded-full bg-emerald-500/20 text-emerald-400">
-                <Check size={12} />
-              </div>
-              <span>Realistic role-based AI interviewers</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <div className="grid h-5 w-5 place-items-center rounded-full bg-brand-500/20 text-brand-300">
-                <Check size={12} />
-              </div>
-              <span>Automated answer review with instant grading</span>
-            </div>
-          </div>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">Welcome back</h1>
+          <p className="mt-2 text-xs text-slate-400">
+            Sign in to access your interview practice sessions and ATS insights.
+          </p>
         </div>
 
-        {/* Right Side: Login Form & Google Auth */}
-        <div className="flex flex-col justify-center space-y-6 rounded-[2rem] border border-white/10 bg-slate-900/50 p-8 sm:p-10 shadow-soft">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Sign In</h2>
-            <p className="mt-1 text-sm text-slate-400">Choose your preferred login method</p>
-          </div>
-
+        <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl space-y-5">
           {error && (
-            <p className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-              {error}
-            </p>
+            <div className="flex items-center gap-2.5 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error}</span>
+            </div>
           )}
 
-          {/* Google & Demo Quick Buttons */}
-          <div className="grid gap-3">
+          {/* Social / 1-Click Fast Access */}
+          <div className="space-y-3">
             <button
               type="button"
               onClick={() => setShowGoogleModal(true)}
               disabled={googleLoading}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/5 py-3 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-white/10 hover:border-white/30 disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 py-3 px-4 text-xs font-semibold text-white transition hover:bg-white/10 hover:border-white/20 disabled:opacity-50"
             >
               <GoogleIcon />
               <span>{googleLoading ? "Signing in with Google..." : "Continue with Google"}</span>
@@ -256,7 +243,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Google Sign-in Modal for Custom Google Account / 1-Click Select */}
+      {/* Google Sign-in Modal */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md">
           <div className="w-full max-w-md rounded-3xl border border-white/15 bg-slate-900 p-6 shadow-2xl space-y-5">
@@ -273,13 +260,20 @@ export default function LoginPage() {
               </button>
             </div>
 
+            <div className="rounded-2xl border border-brand-500/20 bg-brand-500/10 p-3 text-xs text-brand-300 flex items-start gap-2">
+              <Info size={16} className="shrink-0 mt-0.5" />
+              <span>
+                To configure standard Google OAuth with your own domain, add <code>NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> in Vercel Dashboard → Environment Variables.
+              </span>
+            </div>
+
             <p className="text-xs text-slate-400">
-              Enter your Google account details to create or link your Flowzint account:
+              Enter your Google account details to sign in or link your Flowzint account:
             </p>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Google Email</label>
+                <label className="text-xs text-slate-400 font-medium">Google Account Email</label>
                 <input
                   type="email"
                   placeholder="your.email@gmail.com"
@@ -290,10 +284,10 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-400">Your Name (Optional)</label>
+                <label className="text-xs text-slate-400 font-medium">Your Name (Optional)</label>
                 <input
                   type="text"
-                  placeholder="Shivanshu Yadav"
+                  placeholder="Candidate Name"
                   value={googleName}
                   onChange={(e) => setGoogleName(e.target.value)}
                   className="mt-1 w-full rounded-2xl border border-white/10 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-brand-400"
@@ -303,11 +297,11 @@ export default function LoginPage() {
 
             <div className="flex gap-3 pt-2">
               <Button
-                onClick={() => handleGoogleSignIn(googleEmail || "google.user@flowzint.com", googleName || "Google Candidate")}
+                onClick={() => handleGoogleSignIn()}
                 disabled={googleLoading}
                 className="flex-1"
               >
-                {googleLoading ? "Connecting..." : "Continue with this Account"}
+                {googleLoading ? "Connecting..." : "Continue with Google Account"}
               </Button>
             </div>
           </div>

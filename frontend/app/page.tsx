@@ -40,7 +40,9 @@ export default function Home() {
   const startLiveDemo = async () => {
     setDemoStarting(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const apiUrl = typeof window !== "undefined" && process.env.NEXT_PUBLIC_API_URL && !process.env.NEXT_PUBLIC_API_URL.includes("localhost:8000")
+        ? process.env.NEXT_PUBLIC_API_URL
+        : "/api";
       const response = await fetch(`${apiUrl}/auth/demo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

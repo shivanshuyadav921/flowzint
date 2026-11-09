@@ -36,3 +36,8 @@ Thumbs.db
 # Vercel
 .vercel/
 .vercel
+.env*
+
+*.db
+.flowzint_data.json
+frontend/.flowzint_data.json
