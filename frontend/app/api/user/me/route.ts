@@ -4,3 +4,4 @@ import { GET as getAuthMe } from "@/app/api/auth/me/route";
 export async function GET(req: NextRequest) {
   return getAuthMe(req);
 }
+

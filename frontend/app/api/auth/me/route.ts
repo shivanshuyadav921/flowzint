@@ -30,3 +30,4 @@ export async function GET(req: NextRequest) {
     created_at: user.created_at,
   });
 }
+

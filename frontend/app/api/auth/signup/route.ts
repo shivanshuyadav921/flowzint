@@ -49,3 +49,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Signup failed." }, { status: 500 });
   }
 }
+

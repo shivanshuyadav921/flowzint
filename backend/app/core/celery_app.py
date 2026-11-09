@@ -14,3 +14,4 @@ except ImportError:
             return decorator
 
     celery_app = MockCelery()
+

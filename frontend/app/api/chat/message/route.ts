@@ -29,3 +29,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Chat message failed." }, { status: 500 });
   }
 }
+

@@ -50,3 +50,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Google authentication failed." }, { status: 500 });
   }
 }
+

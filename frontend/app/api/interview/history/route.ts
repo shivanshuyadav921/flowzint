@@ -18,3 +18,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Failed to fetch interview history." }, { status: 500 });
   }
 }
+

@@ -53,3 +53,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Failed to fetch analytics summary." }, { status: 500 });
   }
 }
+

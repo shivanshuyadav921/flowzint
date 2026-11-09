@@ -68,3 +68,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ detail: err.message || "Failed to generate interview." }, { status: 500 });
   }
 }
+
